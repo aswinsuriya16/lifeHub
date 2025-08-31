@@ -6,10 +6,46 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id  @default(autoincrement())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  tweets    Tweet[]
+  upvotes   Upvote[]
+  downvotes Downvote[]
+}
+
+model Tweet {
+  id            Int        @id @default(autoincrement())
+  description   String
+  userId        Int
+  user          User       @relation(fields: [userId] , references: [id])
+  upvotes       Upvote[]
+  downvotes     Downvote[]
+}
+
+model Upvote {
+  id        Int     @id @default(autoincrement())
+  userId    Int     
+  tweetId   Int
+  user      User   @relation(fields: [userId] , references: [id])
+  tweet     Tweet @relation(fields: [tweetId] , references: [id])
+  @@unique([userId,tweetId])
+}
+
+model Downvote {
+  id      Int    @id @default(autoincrement())
+  userId  Int
+  tweetId Int
+  user    User   @relation(fields: [userId] , references: [id])
+  tweet   Tweet @relation(fields: [tweetId] , references: [id])
+  @@unique([userId,tweetId])
 }
