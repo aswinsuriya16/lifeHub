@@ -7,34 +7,6 @@ import { JWT } from "next-auth/jwt";
 
 export const authOptions = NextAuth({
   providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text", placeholder: "Enter your email" },
-        username: { label: "Username", type: "text", placeholder: "Enter your username" },
-        password: { label: "Password", type: "password", placeholder: "Enter your password" },
-      },
-      async authorize(credentials) {
-        const user = await prismaClient.user.findUnique({
-          where : {
-            username : credentials?.username
-          }
-        })
-        if(!user) {
-          return null;
-        }
-        const isValid = await bcrypt.compare(credentials?.password ?? "", user.password ?? "");
-        if(!isValid) {
-          return null;
-        }
-        return {
-          id : user.id.toString(),
-          name : user.username,
-          email : user.email
-        }
-      },
-    }),
-
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
