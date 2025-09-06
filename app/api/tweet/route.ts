@@ -6,7 +6,7 @@ import { authOptions } from "../auth/[...nextauth]/route";
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession();
-    if (!session || !session.user?.id) {
+    if (!session || !session.user?.email) {
       return NextResponse.json({
         msg : "unauthorized"
       });
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         userId: session.user.id,
       },
     });
-
+    console.log("check ...... ")
     return NextResponse.json(
       {
         message: "Tweet added successfully",

@@ -6,21 +6,21 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 
 export function TweetComposer({ onPosted }: { onPosted?: () => void }) {
-  const [content, setContent] = useState("")
+  const [description, setContent] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const canPost = content.trim().length > 0 && content.trim().length <= 280
+  const canPost = description.trim().length > 0 && description.trim().length <= 280
 
   async function handlePost() {
     if (!canPost) return
     setSubmitting(true)
     setError(null)
     try {
-      const res = await fetch("/api/posts", {
+      const res = await fetch("/api/tweet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ description }),
       })
       if (!res.ok) throw new Error("Failed to post")
       setContent("")
@@ -40,7 +40,7 @@ export function TweetComposer({ onPosted }: { onPosted?: () => void }) {
         </h2>
         <div className="flex flex-col gap-3">
           <Textarea
-            value={content}
+            value={description}
             onChange={(e) => setContent(e.target.value)}
             placeholder="What's happening?"
             aria-label="Post content"
@@ -48,7 +48,7 @@ export function TweetComposer({ onPosted }: { onPosted?: () => void }) {
             className="min-h-24"
           />
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">{content.trim().length}/280</span>
+            <span className="text-xs text-muted-foreground">{description.trim().length}/280</span>
             <Button
               onClick={handlePost}
               disabled={!canPost || submitting}

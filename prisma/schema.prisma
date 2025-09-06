@@ -26,26 +26,26 @@ model User {
 model Tweet {
   id            Int        @id @default(autoincrement())
   description   String
-  userId        Int
-  user          User       @relation(fields: [userId] , references: [id])
+  username      String
+  user          User       @relation(fields: [username] , references: [username])
   upvotes       Upvote[]
   downvotes     Downvote[]
 }
 
 model Upvote {
   id        Int     @id @default(autoincrement())
-  userId    Int     
+  username  String     
   tweetId   Int
-  user      User   @relation(fields: [userId] , references: [id])
+  user      User   @relation(fields: [username] , references: [username])
   tweet     Tweet @relation(fields: [tweetId] , references: [id])
-  @@unique([userId,tweetId])
+  @@unique([username,tweetId])
 }
 
 model Downvote {
   id      Int    @id @default(autoincrement())
-  userId  Int
+  username  String
   tweetId Int
-  user    User   @relation(fields: [userId] , references: [id])
+  user    User   @relation(fields: [username] , references: [username])
   tweet   Tweet @relation(fields: [tweetId] , references: [id])
-  @@unique([userId,tweetId])
+  @@unique([username,tweetId])
 }

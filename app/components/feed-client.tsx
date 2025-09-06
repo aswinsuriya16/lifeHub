@@ -15,7 +15,7 @@ export type Post = {
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 export default function FeedClient() {
-  const { data, error, isLoading, mutate } = useSWR<Post[]>("/api/posts", fetcher, {
+  const { data, error, isLoading, mutate } = useSWR<Post[]>("/api/tweet", fetcher, {
     revalidateOnFocus: false,
   })
 
