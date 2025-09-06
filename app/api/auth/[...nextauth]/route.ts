@@ -1,18 +1,16 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
 import { prismaClient } from "../../../../lib/prisma"
-import bcrypt from "bcrypt";
 import { JWT } from "next-auth/jwt";
 
-export const authOptions = NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-    }),
+    }),     
   ],callbacks : {
-    async signIn({user}) {
+    async signIn({user} : { user : any}) {
             try {
                 if(!user) { 
                 return false;
@@ -36,6 +34,7 @@ export const authOptions = NextAuth({
             }
         },
         async jwt({token,user} : {
+          //todo
           user : any
           token : JWT
         }) {
@@ -46,14 +45,18 @@ export const authOptions = NextAuth({
           }
           return token;
         },
-        async session({session,token}) {
+        async session({session,token} : {
+          //todo
+          session : any,
+          token : JWT
+        }) {
           if(session.user && token) {
             session.user.id = token.id
           }
           return session;
         }
   }
-});
+};
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
