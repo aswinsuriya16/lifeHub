@@ -24,28 +24,30 @@ model User {
 }
 
 model Tweet {
-  id            Int        @id @default(autoincrement())
-  description   String
-  username      String
-  user          User       @relation(fields: [username] , references: [username])
-  upvotes       Upvote[]
-  downvotes     Downvote[]
+  id          Int      @id @default(autoincrement())
+  description String
+  email       String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [email], references: [email])
+  upvotes     Upvote[]
+  downvotes   Downvote[]
 }
+
 
 model Upvote {
   id        Int     @id @default(autoincrement())
-  username  String     
+  email  String     
   tweetId   Int
-  user      User   @relation(fields: [username] , references: [username])
+  user      User   @relation(fields: [email] , references: [email])
   tweet     Tweet @relation(fields: [tweetId] , references: [id])
-  @@unique([username,tweetId])
+  @@unique([email,tweetId])
 }
 
 model Downvote {
   id      Int    @id @default(autoincrement())
-  username  String
+  email  String
   tweetId Int
-  user    User   @relation(fields: [username] , references: [username])
+  user    User   @relation(fields: [email] , references: [email])
   tweet   Tweet @relation(fields: [tweetId] , references: [id])
-  @@unique([username,tweetId])
+  @@unique([email,tweetId])
 }

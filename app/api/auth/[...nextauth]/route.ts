@@ -43,6 +43,17 @@ export const authOptions = {
           token.email = dbUser.email;
         }
       }
+
+      if(!token.username && token.email) {
+        const dbuser = await prismaClient.user.findUnique({
+          where : {
+            email : token.email
+          }
+        })
+        if(dbuser) {
+          token.username = dbuser.username;
+        }
+      }
       return token;
     },
 

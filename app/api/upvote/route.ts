@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
   try {
     const existingUpvote = await prismaClient.upvote.findUnique({
       where: {
-        userId_tweetId: {
-          userId,
+        email_tweetId: {
+          email,
           tweetId,
         },
       },
@@ -29,17 +29,17 @@ export async function POST(req: NextRequest) {
 
     if (existingUpvote) {
       await prismaClient.upvote.delete({
-        where: { userId_tweetId: { userId, tweetId } },
+        where: { email_tweetId: { email, tweetId } },
       });
 
       return NextResponse.json({ message: "Upvote removed" });
     }
     await prismaClient.downvote.deleteMany({
-      where: { userId, tweetId },
+      where: { email, tweetId },
     });
 
     await prismaClient.upvote.create({
-      data: { userId, tweetId },
+      data: { email, tweetId },
     });
 
     return NextResponse.json({ message: "Upvoted successfully" });

@@ -1,29 +1,46 @@
 "use client"
 
-import useSWR from "swr"
+import { useState, useEffect } from "react"
 import { TweetComposer } from "./tweet-composer"
 import { TweetList } from "./tweet-list"
 
+// Match your Prisma Tweet model
 export type Post = {
-  id: string
-  content: string
-  author: string
+  id: number
+  description: string
+  email: string
   createdAt: string
-  score: number
+  score: number,
+  author: string
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
-
 export default function FeedClient() {
-  const { data, error, isLoading, mutate } = useSWR<Post[]>("/api/tweet", fetcher, {
-    revalidateOnFocus: false,
-  })
+  const [data, setData] = useState<Post[]>([])
+  const [error, setError] = useState<Error | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch("/api/tweet")
+      const posts = await response.json()
+      setData(posts)
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Failed to fetch posts"))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <div className="flex flex-col gap-6">
       <TweetComposer
         onPosted={async () => {
-          await mutate()
+          await fetchData()
         }}
       />
       {error ? (
@@ -31,7 +48,7 @@ export default function FeedClient() {
       ) : isLoading ? (
         <div className="text-sm text-muted-foreground">Loading feed…</div>
       ) : (
-        <TweetList posts={data || []} onChanged={mutate} />
+        <TweetList posts={data} onChanged={fetchData} />
       )}
     </div>
   )
