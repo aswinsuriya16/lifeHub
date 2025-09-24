@@ -20,34 +20,34 @@ model User {
   password  String?
   tweets    Tweet[]
   upvotes   Upvote[]
-  downvotes Downvote[]
+  // downvotes Downvote[]
 }
 
 model Tweet {
   id          Int      @id @default(autoincrement())
   description String
-  email       String
+  userId      Int 
   createdAt   DateTime @default(now())
-  user        User     @relation(fields: [email], references: [email])
+  user        User     @relation(fields: [userId], references: [id])
   upvotes     Upvote[]
-  downvotes   Downvote[]
+  // downvotes   Downvote[]
 }
 
 
 model Upvote {
-  id        Int     @id @default(autoincrement())
-  email  String     
+  id        Int     @id @default(autoincrement())  
   tweetId   Int
-  user      User   @relation(fields: [email] , references: [email])
+  userId    Int 
+  user      User   @relation(fields: [userId] , references: [id])
   tweet     Tweet @relation(fields: [tweetId] , references: [id])
-  @@unique([email,tweetId])
+  @@unique([userId,tweetId])
 }
 
-model Downvote {
-  id      Int    @id @default(autoincrement())
-  email  String
-  tweetId Int
-  user    User   @relation(fields: [email] , references: [email])
-  tweet   Tweet @relation(fields: [tweetId] , references: [id])
-  @@unique([email,tweetId])
-}
+// model Downvote {
+//   id      Int    @id @default(autoincrement())
+//   email  String
+//   tweetId Int
+//   user    User   @relation(fields: [email] , references: [email])
+//   tweet   Tweet @relation(fields: [tweetId] , references: [id])
+//   @@unique([email,tweetId])
+// }
