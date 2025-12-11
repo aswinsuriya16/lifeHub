@@ -5,7 +5,7 @@ import FeedClient from "./components/feed-client";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function HomePage() {
-  const { data: session } = useSession(); // correct usage
+  const { data: session } = useSession(); 
 
   return (
     <main className="min-h-screen bg-background text-foreground">

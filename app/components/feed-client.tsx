@@ -22,8 +22,9 @@ export default function FeedClient() {
   const fetchData = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/tweet")
-      const posts = await response.json()
+      const response = await fetch("/api/tweet");
+      const posts = await response.json();
+      console.log(posts);
       setData(posts)
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to fetch posts"))

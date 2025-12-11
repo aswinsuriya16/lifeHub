@@ -13,6 +13,7 @@ export function TweetComposer({ onPosted }: { onPosted?: () => void }) {
   const canPost = description.trim().length > 0 && description.trim().length <= 280
 
   async function handlePost() {
+    console.log(description);
     if (!canPost) return
     setSubmitting(true)
     setError(null)

@@ -23,7 +23,7 @@ export const authOptions = {
             password: null,
           },
         });
-
+        console.log(user);
         return true;
       } catch (e) {
         console.error("Google provider signin error", e);
@@ -50,8 +50,10 @@ export const authOptions = {
             email : token.email
           }
         })
+        
         if(dbuser) {
           token.username = dbuser.username;
+          token.id = dbuser.id;
         }
       }
       return token;
