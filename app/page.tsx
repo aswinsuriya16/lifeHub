@@ -10,7 +10,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <nav className="bg-card text-card-foreground p-4 flex justify-between items-center shadow-md">
-        <h1 className="text-xl font-bold">LifeHub</h1>
+        <h1 className="text-xl font-bold">UPLIFE</h1>
         <div>
           {!session?.user && (
             <button
@@ -33,7 +33,7 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-xl px-4 py-8">
         <header className="mb-6">
-          <h1 className="text-balance text-2xl font-semibold tracking-tight">Twix</h1>
+          <h1 className="text-balance text-2xl font-semibold tracking-tight">Just Tweet it...</h1>
           <p className="text-sm text-muted-foreground">
             Share a thought. Upvote what you like.
           </p>
