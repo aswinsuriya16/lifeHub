@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ export function TweetList({
       {posts.map((p) => (
         <TweetCard key={p.id} post={p} onChanged={onChanged} />
       ))}
+
       {posts.length === 0 && (
         <p className="text-sm text-muted-foreground">
           No posts yet. Be the first!
@@ -27,41 +29,34 @@ export function TweetList({
   );
 }
 
-// Safely generate initials from name/author
+
 function initials(name?: string) {
-  if (!name) return "U"; // fallback
+  if (!name) return "U";
   return name
     .split(" ")
-    .map((s) => s[0]?.toUpperCase())
+    .map((n) => n[0]?.toUpperCase())
     .slice(0, 2)
     .join("");
 }
 
 function timeAgo(iso?: string) {
   if (!iso) return "";
-  const d = new Date(iso).getTime();
-  const diff = Date.now() - d;
-  const mins = Math.floor(diff / 60000);
+  const ms = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(ms / 60000);
   if (mins < 1) return "just now";
   if (mins < 60) return `${mins}m`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d`;
+  return `${Math.floor(hrs / 24)}d`;
 }
 
 function VoteButton({
-  label,
   onClick,
-  variant,
   disabled,
 }: {
-  label: string;
   onClick: () => void;
-  variant: "up" | "down";
   disabled?: boolean;
 }) {
-  const up = variant === "up";
   return (
     <Button
       type="button"
@@ -69,16 +64,9 @@ function VoteButton({
       variant="outline"
       disabled={disabled}
       onClick={onClick}
-      className={cn(
-        "h-8 px-2",
-        up
-          ? "border-emerald-500 text-emerald-600 hover:bg-emerald-50"
-          : "border-input text-muted-foreground hover:bg-muted"
-      )}
-      aria-label={label}
-      title={label}
+      className="h-8 px-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50"
     >
-      {up ? "▲" : "▼"}
+      ▲
     </Button>
   );
 }
@@ -92,14 +80,15 @@ export function TweetCard({
 }) {
   const [pending, setPending] = useState(false);
 
-  async function vote(delta: 1 | -1) {
+  async function vote() {
     setPending(true);
     try {
-      const res = await fetch(`/api/tweet/${post.id}/vote`, {
+      const res = await fetch(`/api/upvote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ delta }),
+        body: JSON.stringify({ postId: post.id }),
       });
+
       if (!res.ok) throw new Error("Vote failed");
       onChanged?.();
     } finally {
@@ -116,6 +105,7 @@ export function TweetCard({
               {initials(post.author)}
             </AvatarFallback>
           </Avatar>
+
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-medium">{post.author || "Unknown"}</span>
@@ -123,32 +113,21 @@ export function TweetCard({
                 • {timeAgo(post.createdAt)}
               </span>
             </div>
+
             <p className="mt-1 text-pretty leading-relaxed">
               {post.description || ""}
             </p>
+
             <div className="mt-3 flex items-center gap-2">
-              <VoteButton
-                label="Upvote"
-                variant="up"
-                onClick={() => vote(1)}
-                disabled={pending}
-              />
-              <VoteButton
-                label="Downvote"
-                variant="down"
-                onClick={() => vote(-1)}
-                disabled={pending}
-              />
+              <VoteButton onClick={vote} disabled={pending} />
+
               <span
                 className={cn(
                   "ml-2 text-xs font-medium",
-                  post.score >= 0
-                    ? "text-emerald-600"
-                    : "text-muted-foreground"
+                  post.score > 0 ? "text-emerald-600" : "text-muted-foreground"
                 )}
-                aria-label={`Score ${post.score}`}
               >
-                {post.score >= 0 ? `+${post.score}` : `${post.score}`}
+                +{post.score}
               </span>
             </div>
           </div>

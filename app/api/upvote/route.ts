@@ -6,10 +6,13 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.id)
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const { tweetId } = await req.json();
+    if (!session?.user?.id) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const { postId } = await req.json();
+    const tweetId = Number(postId);
 
     await prismaClient.upvote.upsert({
       where: {
@@ -31,4 +34,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Error" }, { status: 500 });
   }
 }
-

@@ -43,11 +43,3 @@ model Upvote {
   @@unique([userId,tweetId])
 }
 
-// model Downvote {
-//   id      Int    @id @default(autoincrement())
-//   email  String
-//   tweetId Int
-//   user    User   @relation(fields: [email] , references: [email])
-//   tweet   Tweet @relation(fields: [tweetId] , references: [id])
-//   @@unique([email,tweetId])
-// }

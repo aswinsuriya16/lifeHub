@@ -50,13 +50,17 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const tweets = await prismaClient.tweet.findMany({
-      orderBy: { id: "desc" },
+      orderBy: {
+        upvotes : {
+          _count : "desc"
+        }
+      },
       include: { upvotes: true , user : true}, 
     });
 
     const formatted = tweets.map((t) => ({
       id: t.id.toString(),
-      content: t.description,
+      description: t.description,
       author: t.user.username,
       createdAt: t.createdAt.toISOString(),
       score: t.upvotes.length
