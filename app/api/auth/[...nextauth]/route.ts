@@ -4,6 +4,9 @@ import { prismaClient } from "../../../../lib/prisma";
 import { JWT } from "next-auth/jwt";
 
 export const authOptions = {
+  pages: {
+    signIn: "/auth/signin",
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
