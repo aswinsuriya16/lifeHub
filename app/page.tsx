@@ -34,7 +34,7 @@ export default function HomePage() {
       <section className="mx-auto max-w-xl px-4 py-8">
         <header className="mb-6">
           <h1 className="text-balance text-2xl font-semibold tracking-tight">Just Tweet it...</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground m-2">
             Share a thought. Upvote what you like.
           </p>
         </header>

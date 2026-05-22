@@ -29,8 +29,8 @@ LifeHub is a community-driven platform where users share life lessons and though
 1. Users authenticate using the built-in authentication system.
 2. Authenticated users can post tweets sharing life lessons.
 3. Other users can upvote these tweets.
-4. Tweets are sorted based on upvote count.
-5. The most upvoted tweets appear at the top of the feed.
+4. Tweets are sorted based on count of the votes.
+5. The most voted tweets appear at the top of the feed.
 
 ---
 
@@ -42,6 +42,8 @@ LifeHub is a community-driven platform where users share life lessons and though
   - Stores user-generated life lessons
 - **Upvote**
   - Tracks user upvotes on tweets
+- **Downvote**
+  -Tracks user downvotes on tweets  
 
 ---
 
