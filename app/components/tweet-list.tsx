@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -9,15 +10,22 @@ import type { Post } from "./feed-client";
 
 export function TweetList({
   posts,
+  currentUserId,
   onChanged,
 }: {
   posts: Post[];
+  currentUserId?: number;
   onChanged?: () => void;
 }) {
   return (
     <div className="flex flex-col gap-4">
       {posts.map((p) => (
-        <TweetCard key={p.id} post={p} onChanged={onChanged} />
+        <TweetCard
+          key={p.id}
+          post={p}
+          currentUserId={currentUserId}
+          onChanged={onChanged}
+        />
       ))}
 
       {posts.length === 0 && (
@@ -77,12 +85,16 @@ function VoteButton({
 
 export function TweetCard({
   post,
+  currentUserId,
   onChanged,
 }: {
   post: Post;
+  currentUserId?: number;
   onChanged?: () => void;
 }) {
+  const { data: session } = useSession();
   const [pending, setPending] = useState(false);
+  const canDelete = currentUserId === post.authorId && session?.user?.id === post.authorId;
 
   async function vote(direction: "upvote" | "downvote") {
     setPending(true);
@@ -94,6 +106,22 @@ export function TweetCard({
       });
 
       if (!res.ok) throw new Error("Vote failed");
+      onChanged?.();
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function removeTweet() {
+    setPending(true);
+    try {
+      const res = await fetch("/api/tweet", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId: post.id }),
+      });
+
+      if (!res.ok) throw new Error("Delete failed");
       onChanged?.();
     } finally {
       setPending(false);
@@ -150,6 +178,19 @@ export function TweetCard({
               >
                 {post.score > 0 ? `+${post.score}` : post.score}
               </span>
+
+              {canDelete && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="destructive"
+                  disabled={pending}
+                  onClick={removeTweet}
+                  className="ml-auto"
+                >
+                  Delete
+                </Button>
+              )}
             </div>
           </div>
         </div>

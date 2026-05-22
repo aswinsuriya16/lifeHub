@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import { TweetComposer } from "./tweet-composer"
 import { TweetList } from "./tweet-list"
 
@@ -8,13 +9,14 @@ import { TweetList } from "./tweet-list"
 export type Post = {
   id: number
   description: string
-  email: string
   createdAt: string
-  score: number,
+  score: number
   author: string
+  authorId: number
 }
 
 export default function FeedClient() {
+  const { data: session } = useSession()
   const [data, setData] = useState<Post[]>([])
   const [error, setError] = useState<Error | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -22,9 +24,9 @@ export default function FeedClient() {
   const fetchData = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/tweet");
-      const posts = await response.json();
-      console.log(posts);
+      const response = await fetch("/api/tweet")
+      if (!response.ok) throw new Error("Failed to fetch posts")
+      const posts = await response.json()
       setData(posts)
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to fetch posts"))
@@ -49,7 +51,11 @@ export default function FeedClient() {
       ) : isLoading ? (
         <div className="text-sm text-muted-foreground">Loading feed…</div>
       ) : (
-        <TweetList posts={data} onChanged={fetchData} />
+        <TweetList
+          posts={data}
+          currentUserId={session?.user?.id}
+          onChanged={fetchData}
+        />
       )}
     </div>
   )
