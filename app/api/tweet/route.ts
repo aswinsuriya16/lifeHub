@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
           _count : "desc"
         }
       },
-      include: { upvotes: true , user : true}, 
+      include: { upvotes: true, downvotes: true, user : true }, 
     });
 
     const formatted = tweets.map((t) => ({
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       description: t.description,
       author: t.user.username,
       createdAt: t.createdAt.toISOString(),
-      score: t.upvotes.length
+      score: t.upvotes.length - t.downvotes.length
     }));
 
     return NextResponse.json(formatted, { status: 200 });

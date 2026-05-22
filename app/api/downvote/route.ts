@@ -15,13 +15,13 @@ export async function POST(req: NextRequest) {
     const tweetId = Number(postId);
 
     await prismaClient.$transaction([
-      prismaClient.downvote.deleteMany({
+      prismaClient.upvote.deleteMany({
         where: {
           userId: session.user.id,
           tweetId,
         },
       }),
-      prismaClient.upvote.upsert({
+      prismaClient.downvote.upsert({
         where: {
           userId_tweetId: {
             userId: session.user.id,
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Error upvoting:", err);
+    console.error("Error downvoting:", err);
     return NextResponse.json({ message: "Error" }, { status: 500 });
   }
 }

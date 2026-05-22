@@ -53,9 +53,13 @@ function timeAgo(iso?: string) {
 function VoteButton({
   onClick,
   disabled,
+  children,
+  className,
 }: {
   onClick: () => void;
   disabled?: boolean;
+  children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <Button
@@ -64,9 +68,9 @@ function VoteButton({
       variant="outline"
       disabled={disabled}
       onClick={onClick}
-      className="h-8 px-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+      className={cn("h-8 px-2", className)}
     >
-      ▲
+      {children}
     </Button>
   );
 }
@@ -80,10 +84,10 @@ export function TweetCard({
 }) {
   const [pending, setPending] = useState(false);
 
-  async function vote() {
+  async function vote(direction: "upvote" | "downvote") {
     setPending(true);
     try {
-      const res = await fetch(`/api/upvote`, {
+      const res = await fetch(`/api/${direction}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ postId: post.id }),
@@ -119,15 +123,32 @@ export function TweetCard({
             </p>
 
             <div className="mt-3 flex items-center gap-2">
-              <VoteButton onClick={vote} disabled={pending} />
+              <VoteButton
+                onClick={() => vote("upvote")}
+                disabled={pending}
+                className="border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+              >
+                ▲
+              </VoteButton>
+              <VoteButton
+                onClick={() => vote("downvote")}
+                disabled={pending}
+                className="border-rose-500 text-rose-600 hover:bg-rose-50"
+              >
+                ▼
+              </VoteButton>
 
               <span
                 className={cn(
                   "ml-2 text-xs font-medium",
-                  post.score > 0 ? "text-emerald-600" : "text-muted-foreground"
+                  post.score > 0
+                    ? "text-emerald-600"
+                    : post.score < 0
+                      ? "text-rose-600"
+                      : "text-muted-foreground"
                 )}
               >
-                +{post.score}
+                {post.score > 0 ? `+${post.score}` : post.score}
               </span>
             </div>
           </div>
