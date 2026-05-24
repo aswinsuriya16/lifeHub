@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -32,10 +33,35 @@ function GoogleIcon() {
   );
 }
 
-export default function SignInPage() {
+function SignInContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
+  return (
+    <section className="mx-auto flex min-h-[calc(100vh-73px)] max-w-xl items-center px-4 py-8">
+      <div className="w-full rounded-xl border bg-card p-6 shadow-sm">
+        <header className="mb-6">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Sign in
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Use Google to continue to your feed.
+          </p>
+        </header>
+
+        <button
+          onClick={() => signIn("google", { callbackUrl })}
+          className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-4 py-3 font-medium text-black transition hover:bg-white/90"
+        >
+          <GoogleIcon />
+          Sign in with Google
+        </button>
+      </div>
+    </section>
+  );
+}
+
+export default function SignInPage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <nav className="bg-card text-card-foreground p-4 shadow-md">
@@ -46,26 +72,15 @@ export default function SignInPage() {
         </div>
       </nav>
 
-      <section className="mx-auto flex min-h-[calc(100vh-73px)] max-w-xl items-center px-4 py-8">
-        <div className="w-full rounded-xl border bg-card p-6 shadow-sm">
-          <header className="mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Sign in
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Use Google to continue to your feed.
-            </p>
-          </header>
-
-          <button
-            onClick={() => signIn("google", { callbackUrl })}
-            className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-4 py-3 font-medium text-black transition hover:bg-white/90"
-          >
-            <GoogleIcon />
-            Sign in with Google
-          </button>
-        </div>
-      </section>
+      <Suspense
+        fallback={
+          <section className="mx-auto flex min-h-[calc(100vh-73px)] max-w-xl items-center px-4 py-8">
+            <div className="w-full rounded-xl border bg-card p-6 shadow-sm" />
+          </section>
+        }
+      >
+        <SignInContent />
+      </Suspense>
     </main>
   );
 }
