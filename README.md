@@ -6,7 +6,7 @@ LifeHub is a community-driven platform where users share life lessons and though
 
 ## Live
 
-https://life-hub-ten.vercel.app/
+https://lifehub.aswinsuriya.shop/
 
 ---
 
